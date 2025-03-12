@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'myapp',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'myapp.middleware.logging_middleware.LoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -66,6 +68,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
@@ -111,6 +115,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+USE_X_FORWARDED_HOST = True  # Allow forwarding the X-Forwarded-For header
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
