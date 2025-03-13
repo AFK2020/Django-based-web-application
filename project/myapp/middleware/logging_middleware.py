@@ -2,6 +2,11 @@ from django.http import HttpResponseForbidden
 from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
 from django.core.cache import cache
+from myapp.models import CustomUser, Profile
+import logging
+
+logger = logging.getLogger('myapp')
+
 
 class RateLimitMiddleware(MiddlewareMixin):
     rate_limit = 500  # Number of allowed requests
@@ -24,6 +29,8 @@ class RateLimitMiddleware(MiddlewareMixin):
             request.ip_address = ip
             request.request_time = request_time
             cache.incr(key)
+            # This will be written to the file since the level is set to INFO
+            logger.info(f"{request.ip_address} : {request.request_time} ")
             # Call the next middleware or view
             response = self.get_response(request)
             return response
