@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-ct8nw%y-cs91ff*y*&(lc-*s05w(-0df11f7w7c=pf^y00j9dp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
 
 
@@ -51,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'myapp.middleware.logging_middleware.RateLimitMiddleware',
+    'myapp.middleware.ip_logging.RateLimitMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -84,7 +85,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'errors.log'),
+            'filename': os.path.join(BASE_DIR,'ip.log'),
         },
     },
     'loggers': {
@@ -157,4 +158,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-GOLD = 5
+
+GOLD = 10
+SILVER = 5
+BRONZE = 2
