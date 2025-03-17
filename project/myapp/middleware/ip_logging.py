@@ -40,8 +40,7 @@ class RateLimitMiddleware(MiddlewareMixin):
             ip = self.get_client_ip(request)
             profile = user.profile
 
-            hit_time_diff = profile.hit_time + datetime.timedelta(minutes=1)
-            if profile.hit_time is None or profile.hit_time < hit_time_diff:
+            if profile.hit_time is None or profile.hit_time < profile.hit_time + datetime.timedelta(minutes=1):
                 if profile.count >= rate_limit:
                     return HttpResponseForbidden("error: Rate limit exceeded")
 

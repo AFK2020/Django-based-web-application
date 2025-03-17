@@ -1,8 +1,11 @@
 from django.contrib import admin
 from .models import CustomUser, Profile
-
+from .forms import CustomUserCreationForm,CustomUserChangeForm
 
 class CustomUserAdmin(admin.ModelAdmin):
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
+    
     list_display = ("email",)
     fieldsets = (
         ("Basic Information", {"fields": (("email", "password"))}),

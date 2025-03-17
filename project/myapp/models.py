@@ -4,6 +4,11 @@ from django.contrib.auth.models import (
     PermissionsMixin,
     BaseUserManager,
 )
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+# from django.conf import settings
+
+from myapp.constants import UserRole
 
 
 class CustomUserManager(BaseUserManager):
@@ -78,11 +83,17 @@ class Profile(models.Model):
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
-        default="Unauthenticated",
         blank=True,
-        null=True,
+        null=True
     )
     ip_address = models.CharField(max_length=200, blank=True, null=True)
     hit_time = models.DateTimeField(blank=True, null=True, default=None)
+
+@receiver(post_save, sender = CustomUser)
+def create_or_save_user_profile(sender,created,instance, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
+
 
 
