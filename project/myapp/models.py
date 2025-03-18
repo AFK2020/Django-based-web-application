@@ -88,6 +88,8 @@ class Profile(models.Model):
     )
     ip_address = models.CharField(max_length=200, blank=True, null=True)
     hit_time = models.DateTimeField(blank=True, null=True, default=None)
+    first_hit = models.DateTimeField(blank=True, null=True, default=None)
+
 
 @receiver(post_save, sender = CustomUser)
 def create_or_save_user_profile(sender,created,instance, **kwargs):

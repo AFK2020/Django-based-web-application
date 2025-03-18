@@ -1,5 +1,6 @@
 import logging
 import datetime
+import pdb
 
 from django.http import HttpResponseForbidden
 from django.utils import timezone
@@ -24,6 +25,7 @@ class RateLimitMiddleware(MiddlewareMixin):
             return self.get_response(request)
         
         user = request.user
+        # pdb.set_trace()
 
         if user.is_authenticated:
             user_role = user.profile.role
@@ -39,31 +41,27 @@ class RateLimitMiddleware(MiddlewareMixin):
 
             ip = self.get_client_ip(request)
             profile = user.profile
+            
+            if profile.count == 0:
+                profile.first_hit = timezone.now()
+                response = self.set_fields(request, profile, ip)
+                return response
 
-            if profile.hit_time is None or profile.hit_time < profile.hit_time + datetime.timedelta(minutes=1):
+
+            if  timezone.now() < profile.first_hit + datetime.timedelta(minutes=1):
                 if profile.count >= rate_limit:
+                    # pdb.set_trace()
                     return HttpResponseForbidden("error: Rate limit exceeded")
 
-                if profile.count == 0:
-                    profile.hit_time = timezone.now()
-                    profile.save()
-
-                if profile.count < rate_limit:
-                    profile.count = profile.count + 1
-                    profile.ip_address = ip
-                    profile.save()
-
-                    # This will be written to the file since the level is set to INFO
-                    logger.info(f"{ip} : {profile.hit_time} ")
-                    # Call the next middleware or view
-                    request.ip_address = ip
-                    request.request_time = profile.hit_time
-
-                    response = self.get_response(request)
+                if profile.count > 0 and profile.count < rate_limit:
+                    response = self.set_fields(request, profile, ip)
                     return response
             else:
                 profile.count = 0
                 profile.save()
+                request.ip_address = ip
+                request.request_time = profile.hit_time
+                return self.get_response(request)
         else:
             return self.get_response(request)
 
@@ -74,3 +72,18 @@ class RateLimitMiddleware(MiddlewareMixin):
         else:
             ip = request.META.get("REMOTE_ADDR")
         return ip
+
+    def set_fields(self, request, profile, ip):
+        profile.hit_time = timezone.now()
+        profile.count = profile.count + 1
+        profile.ip_address = ip
+        profile.save()    
+        # This will be written to the file since the level is set to INFO
+        logger.info(f"{ip} : {profile.hit_time} ")
+        # Call the next middleware or view
+        print(ip)
+        request.ip_address = ip
+        request.request_time = profile.hit_time
+
+        updated = self.get_response(request)
+        return updated
