@@ -6,21 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('myapp', '0001_initial'),
+        ("myapp", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='customuser',
-            name='address',
+            model_name="customuser",
+            name="address",
         ),
         migrations.RemoveField(
-            model_name='customuser',
-            name='mobile',
+            model_name="customuser",
+            name="mobile",
         ),
         migrations.AddField(
-            model_name='customuser',
-            name='role',
-            field=models.CharField(blank=True, choices=[('gold', 'Gold'), ('silver', 'Silver'), ('bronze', 'Bronze')], default='Unauthenticated', max_length=20, null=True),
+            model_name="customuser",
+            name="role",
+            field=models.CharField(
+                blank=True,
+                choices=[("gold", "Gold"), ("silver", "Silver"), ("bronze", "Bronze")],
+                default="Unauthenticated",
+                max_length=20,
+                null=True,
+            ),
         ),
     ]

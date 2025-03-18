@@ -6,9 +6,8 @@ from django.contrib.auth.models import (
 )
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-# from django.conf import settings
 
-from myapp.constants import UserRole
+# from django.conf import settings
 
 
 class CustomUserManager(BaseUserManager):
@@ -32,9 +31,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_superuser", False)
-        return self._create_user(
-            email, password, first_name, last_name, **extra_fields
-        )
+        return self._create_user(email, password, first_name, last_name, **extra_fields)
 
     def create_superuser(self, email, password, first_name, last_name, **extra_fields):
         extra_fields.setdefault("is_staff", True)
@@ -80,22 +77,14 @@ class Profile(models.Model):
 
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
-    role = models.CharField(
-        max_length=20,
-        choices=ROLE_CHOICES,
-        blank=True,
-        null=True
-    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
     ip_address = models.CharField(max_length=200, blank=True, null=True)
     hit_time = models.DateTimeField(blank=True, null=True, default=None)
     first_hit = models.DateTimeField(blank=True, null=True, default=None)
 
 
-@receiver(post_save, sender = CustomUser)
-def create_or_save_user_profile(sender,created,instance, **kwargs):
+@receiver(post_save, sender=CustomUser)
+def create_or_save_user_profile(sender, created, instance, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()
-
-
-

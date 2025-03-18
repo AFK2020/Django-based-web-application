@@ -1,6 +1,5 @@
 import logging
 import datetime
-import pdb
 
 from django.http import HttpResponseForbidden
 from django.utils import timezone
@@ -23,7 +22,7 @@ class RateLimitMiddleware(MiddlewareMixin):
         ]
         if any(paths):
             return self.get_response(request)
-        
+
         user = request.user
         # pdb.set_trace()
 
@@ -41,14 +40,13 @@ class RateLimitMiddleware(MiddlewareMixin):
 
             ip = self.get_client_ip(request)
             profile = user.profile
-            
+
             if profile.count == 0:
                 profile.first_hit = timezone.now()
                 response = self.set_fields(request, profile, ip)
                 return response
 
-
-            if  timezone.now() < profile.first_hit + datetime.timedelta(minutes=1):
+            if timezone.now() < profile.first_hit + datetime.timedelta(minutes=1):
                 if profile.count >= rate_limit:
                     # pdb.set_trace()
                     return HttpResponseForbidden("error: Rate limit exceeded")
@@ -77,7 +75,7 @@ class RateLimitMiddleware(MiddlewareMixin):
         profile.hit_time = timezone.now()
         profile.count = profile.count + 1
         profile.ip_address = ip
-        profile.save()    
+        profile.save()
         # This will be written to the file since the level is set to INFO
         logger.info(f"{ip} : {profile.hit_time} ")
         # Call the next middleware or view

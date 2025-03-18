@@ -1,8 +1,9 @@
 from enum import Enum
 
+
 class UserRole(Enum):
-    GOLD = "gold",
-    SILVER= "silver",
+    GOLD = ("gold",)
+    SILVER = ("silver",)
     BRONZE = "bronze"
 
     @classmethod
